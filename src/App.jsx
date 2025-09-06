@@ -121,16 +121,11 @@ function App() {
   // All the original JavaScript logic is placed here.
   useEffect(() => {
     // Check if external libraries are loaded
-    if (typeof tailwind === 'undefined' || typeof dayjs === 'undefined' || typeof firebase === 'undefined') {
-        console.error("External libraries (Tailwind, Day.js, Firebase) are not loaded. Please ensure they are included in your main index.html file.");
+    if (typeof dayjs === 'undefined' || typeof firebase === 'undefined') {
+        console.error("External libraries (Day.js, Firebase) are not loaded. Please ensure they are included in your main index.html file.");
         return;
     }
     
-    // Tailwind Config
-    tailwind.config = {
-        darkMode: 'class',
-    };
-
     // Day.js setup
     dayjs.extend(window.dayjs_plugin_relativeTime);
     dayjs.extend(window.dayjs_plugin_updateLocale);
@@ -1708,6 +1703,12 @@ function App() {
             }
         }
 
+        // FIREBASE INDEXING NOTE:
+        // The following function uses orderByChild('timestamp'). 
+        // For better performance, ensure you have an index on the 'timestamp' field
+        // in your Firebase Realtime Database security rules for the 'massages' path.
+        // Example Rule: 
+        // { "rules": { "massages": { "$uid": { ".indexOn": "timestamp" } } } }
         function initializeChatListener(uid) {
             if (chatNotificationListener) {
                 db.ref('massages/' + uid).off('child_added', chatNotificationListener);
